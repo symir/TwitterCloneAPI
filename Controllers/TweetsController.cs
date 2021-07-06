@@ -18,17 +18,18 @@ namespace TwitterCloneAPI.Controllers
         {
             _repository = new Repository();
         }
+
         [HttpGet]
-        public List<Tweet> GetAllTweets() 
+        public async Task< List<Tweet>> GetAllTweets() 
         {
-            return _repository.GetAllRepoTweets();
+            return await  _repository.GetAllRepoTweets(true).ConfigureAwait(false);
         }
 
         [HttpGet]
         [Route("{id}")]
-        public Tweet GetTweetById(int id)
+        public async Task<Tweet> GetTweetById(int id)
         {
-            return _repository.GetRepoTweetById(id);
+            return await _repository.GetRepoTweetById(id).ConfigureAwait(false);
         }
     }
 }

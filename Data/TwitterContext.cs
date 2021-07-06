@@ -13,6 +13,6 @@ namespace TwitterCloneAPI.Data
         public DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-            => options.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=Twitterdb");
+            => options.UseSqlServer(@"Data Source=.\sqlexpress; Initial Catalog=Twitterdb; Integrated Security=True");
     }
 }
