@@ -8,6 +8,7 @@ using TwitterCloneAPI.Data;
 
 namespace TwitterCloneAPI.Controllers
 {
+
     [Route("api/tweets")]
     [Controller]
     public class TweetsController : ControllerBase
