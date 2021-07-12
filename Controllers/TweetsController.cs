@@ -20,16 +20,30 @@ namespace TwitterCloneAPI.Controllers
             _repository = new Repository();
         }
         [HttpGet]
-        public List<Tweet> GetAllTweets() 
+        public async Task<ActionResult<List<Tweet>>> GetAllTweets() 
         {
-            return _repository.GetAllRepoTweets();
+            try
+            {
+                return Ok(await _repository.GetAllRepoTweetsAsync());
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
 
         [HttpGet]
         [Route("{id}")]
-        public Tweet GetTweetById(int id)
+        public async Task<ActionResult<Tweet>> GetTweetByIdAsync(int id)
         {
-            return _repository.GetRepoTweetById(id);
-        }
+            try 
+            { 
+                return await _repository.GetRepoTweetByIdAsync(id);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+}
     }
 }
