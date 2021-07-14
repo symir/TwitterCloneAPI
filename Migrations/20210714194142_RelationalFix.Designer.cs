@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TwitterCloneAPI.Data;
 
 namespace TwitterCloneAPI.Migrations
 {
     [DbContext(typeof(TwitterContext))]
-    partial class TwitterContextModelSnapshot : ModelSnapshot
+    [Migration("20210714194142_RelationalFix")]
+    partial class RelationalFix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TwitterCloneAPI.Models;
 using TwitterCloneAPI.Data;
+using TwitterCloneAPI.Models.DTO;
 
 namespace TwitterCloneAPI.Controllers
 {
@@ -20,7 +21,7 @@ namespace TwitterCloneAPI.Controllers
             _repository = new Repository();
         }
         [HttpGet]
-        public async Task<ActionResult<List<Tweet>>> GetAllTweets() 
+        public async Task<ActionResult<List<TweetDTO>>> GetAllTweets() 
         {
             try
             {
@@ -34,11 +35,11 @@ namespace TwitterCloneAPI.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        public async Task<ActionResult<Tweet>> GetTweetByIdAsync(int id)
+        public async Task<ActionResult<TweetDTO>> GetTweetByIdAsync(int id)
         {
             try 
-            { 
-                return await _repository.GetRepoTweetByIdAsync(id);
+            {
+                return Ok(await _repository.GetRepoTweetByIdAsync(id));
             }
             catch (Exception)
             {

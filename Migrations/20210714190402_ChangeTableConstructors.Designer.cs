@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TwitterCloneAPI.Data;
 
 namespace TwitterCloneAPI.Migrations
 {
     [DbContext(typeof(TwitterContext))]
-    partial class TwitterContextModelSnapshot : ModelSnapshot
+    [Migration("20210714190402_ChangeTableConstructors")]
+    partial class ChangeTableConstructors
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,7 +22,7 @@ namespace TwitterCloneAPI.Migrations
 
             modelBuilder.Entity("TwitterCloneAPI.Models.Tweet", b =>
                 {
-                    b.Property<int>("TweetId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -31,7 +33,7 @@ namespace TwitterCloneAPI.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("TweetId");
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
@@ -40,7 +42,7 @@ namespace TwitterCloneAPI.Migrations
 
             modelBuilder.Entity("TwitterCloneAPI.Models.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -50,7 +52,7 @@ namespace TwitterCloneAPI.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("UserId");
+                    b.HasKey("Id");
 
                     b.ToTable("Users");
                 });
