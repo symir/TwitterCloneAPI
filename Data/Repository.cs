@@ -33,51 +33,49 @@ namespace TwitterCloneAPI.Data
                     Tweets = null // Includes User object without Tweet list to avoid recursion
                 };
 
-                TweetDTO tweetOb = new TweetDTO();
+                TweetDTO tweetOb = new TweetDTO() {
+                    TweetId = tw.TweetId,
+                    Content = tw.Content,
+                    RetweetId = tw.RetweetId,
+                    ReplyId = tw.ReplyId,
+                    UserId = tw.UserId,
+                    User = userOb 
+                };
 
-                if (tw.RetweetId != null) // checks if tweet is a reply or a retweet
+                if (tw.RetweetId != null || tw.ReplyId != null) // checks if tweet contains a reference to another tweet (retweet or reply)
                 {
-                    int referenceId = tw.RetweetId ?? default;
-                    Tweet rTw = new Tweet();
 
-                    using (var db = new TwitterContext())
+                    int referenceId = (tw.RetweetId != null) ? tw.RetweetId ?? default : tw.ReplyId ?? default; // checks if this is a retweet or reply, converts the referenced Id from nullable to regular int
+
+                    Tweet rTw = new Tweet();
+                    using (var db = new TwitterContext()) // fetches the referenced tweet
                     {
                         rTw = await db.Tweets
                             .Include(u => u.User) // fetch related User info
                             .FirstOrDefaultAsync(x => x.TweetId == referenceId);
                     }
 
-                    if (rTw == null) { return null; } // if tweet id doesn't exist, return null
+                    if (rTw == null) { return null; } // if referenced tweet id doesn't exist, return null
 
                     UserDTO refUserOb = new UserDTO()
                     {
                         UserId = rTw.User.UserId,
                         UserName = rTw.User.UserName,
-                        Tweets = null // Includes User object without Tweet list to avoid recursion
+                        Tweets = null // Tweet list nulled to avoid recursion
                     };
 
-                    TweetDTO refTweetOb = new TweetDTO() {
+                    TweetDTO refTweetOb = new TweetDTO()
+                    {
                         TweetId = rTw.TweetId,
                         Content = rTw.Content,
                         UserId = rTw.UserId,
                         User = refUserOb
                     };
 
-                    tweetOb.TweetId = tw.TweetId;
-                    tweetOb.RetweetId = tw.RetweetId;
-                    tweetOb.UserId = tw.UserId;
-                    tweetOb.User = userOb;
                     tweetOb.ReferenceTweet = refTweetOb;
-                    //tweetOb.ReferenceUser = refUserOb;
 
-                }
-                else
-                {
-                    tweetOb.TweetId = tw.TweetId;
-                    tweetOb.Content = tw.Content;
-                    tweetOb.UserId = tw.UserId;
-                    tweetOb.User = userOb;
                 };
+
                 tweetsReturn.Add(tweetOb);
             }
 
