@@ -11,9 +11,11 @@ namespace TwitterCloneAPI.Models
 
         public int TweetId { get; set; }
         public string Content { get; set; }
+        public int? ReplyId { get; set; }
+        public int? RetweetId { get; set; }
 
         [Required]
         public int UserId { get; set; }
         public User User { get; set; }
-    }
+    }  
 }

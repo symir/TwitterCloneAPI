@@ -10,6 +10,11 @@ namespace TwitterCloneAPI.Models.DTO
 
         public int TweetId { get; set; }
         public string Content { get; set; }
+        public int? ReplyId { get; set; }
+        public int? RetweetId { get; set; }
+
+        public TweetDTO ReferenceTweet { get; set; } // Container for referenced tweet if retweet or reply
+
         public int UserId { get; set; }
         public UserDTO User { get; set; }
     }

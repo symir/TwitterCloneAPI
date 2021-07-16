@@ -33,16 +33,54 @@ namespace TwitterCloneAPI.Data
                     Tweets = null // Includes User object without Tweet list to avoid recursion
                 };
 
-                TweetDTO tweetOb = new TweetDTO() 
-                    { 
-                        TweetId = tw.TweetId, 
-                        Content = tw.Content,
-                        UserId = tw.UserId,
-                        User = userOb
+                TweetDTO tweetOb = new TweetDTO();
+
+                if (tw.RetweetId != null) // checks if tweet is a reply or a retweet
+                {
+                    int referenceId = tw.RetweetId ?? default;
+                    Tweet rTw = new Tweet();
+
+                    using (var db = new TwitterContext())
+                    {
+                        rTw = await db.Tweets
+                            .Include(u => u.User) // fetch related User info
+                            .FirstOrDefaultAsync(x => x.TweetId == referenceId);
+                    }
+
+                    if (rTw == null) { return null; } // if tweet id doesn't exist, return null
+
+                    UserDTO refUserOb = new UserDTO()
+                    {
+                        UserId = rTw.User.UserId,
+                        UserName = rTw.User.UserName,
+                        Tweets = null // Includes User object without Tweet list to avoid recursion
                     };
 
+                    TweetDTO refTweetOb = new TweetDTO() {
+                        TweetId = rTw.TweetId,
+                        Content = rTw.Content,
+                        UserId = rTw.UserId,
+                        User = refUserOb
+                    };
+
+                    tweetOb.TweetId = tw.TweetId;
+                    tweetOb.RetweetId = tw.RetweetId;
+                    tweetOb.UserId = tw.UserId;
+                    tweetOb.User = userOb;
+                    tweetOb.ReferenceTweet = refTweetOb;
+                    //tweetOb.ReferenceUser = refUserOb;
+
+                }
+                else
+                {
+                    tweetOb.TweetId = tw.TweetId;
+                    tweetOb.Content = tw.Content;
+                    tweetOb.UserId = tw.UserId;
+                    tweetOb.User = userOb;
+                };
                 tweetsReturn.Add(tweetOb);
             }
+
 
             return tweetsReturn;
         }
