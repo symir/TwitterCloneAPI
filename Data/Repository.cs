@@ -19,6 +19,7 @@ namespace TwitterCloneAPI.Data
             {
                 tweets = await db.Tweets
                     .Include(u => u.User) // fetch related User info
+                    .OrderByDescending(t => t.TweetId) // deliver list in descending order based on id (newest first)
                     .ToListAsync();
             }
 
@@ -33,7 +34,8 @@ namespace TwitterCloneAPI.Data
                     Tweets = null // Includes User object without Tweet list to avoid recursion
                 };
 
-                TweetDTO tweetOb = new TweetDTO() {
+                // creates data transfer object for the tweet being iterated
+                TweetDTO tweetOb = new TweetDTO() { 
                     TweetId = tw.TweetId,
                     Content = tw.Content,
                     RetweetId = tw.RetweetId,
@@ -42,10 +44,15 @@ namespace TwitterCloneAPI.Data
                     User = userOb 
                 };
 
-                if (tw.RetweetId != null || tw.ReplyId != null) // checks if tweet contains a reference to another tweet (retweet or reply)
+
+                // checks if tweet contains a reference to another tweet (retweetId or replyId), and adds the referenced tweet as ReferenceTweet. If both fields are populated for some reason,
+                // retweet takes precedence and replyid is ignored.
+
+                if (tw.RetweetId != null || tw.ReplyId != null) 
                 {
 
-                    int referenceId = (tw.RetweetId != null) ? tw.RetweetId ?? default : tw.ReplyId ?? default; // checks if this is a retweet or reply, converts the referenced Id from nullable to regular int
+                    // checks whether this is a retweet or reply, and converts the referenced Id from nullable to regular int
+                    int referenceId = (tw.RetweetId != null) ? tw.RetweetId ?? default : tw.ReplyId ?? default;
 
                     Tweet rTw = new Tweet();
                     using (var db = new TwitterContext()) // fetches the referenced tweet
@@ -61,10 +68,10 @@ namespace TwitterCloneAPI.Data
                     {
                         UserId = rTw.User.UserId,
                         UserName = rTw.User.UserName,
-                        Tweets = null // Tweet list nulled to avoid recursion
+                        Tweets = null // User tweet list nulled to avoid recursion
                     };
 
-                    TweetDTO refTweetOb = new TweetDTO()
+                    TweetDTO refTweetOb = new TweetDTO() // creates data transfer object for the referenced tweet
                     {
                         TweetId = rTw.TweetId,
                         Content = rTw.Content,
@@ -72,7 +79,7 @@ namespace TwitterCloneAPI.Data
                         User = refUserOb
                     };
 
-                    tweetOb.ReferenceTweet = refTweetOb;
+                    tweetOb.ReferenceTweet = refTweetOb; // adds referenced tweet's DTO to parent tweet DTO
 
                 };
 
