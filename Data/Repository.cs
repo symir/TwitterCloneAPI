@@ -34,19 +34,29 @@ namespace TwitterCloneAPI.Data
                     Tweets = null // Includes User object without Tweet list to avoid recursion
                 };
 
+                // fetches counters (index 0 is retweets, 1 is replies)
+                List<int> counters = new List<int>();
+                counters = await GetCounters(tw.TweetId);
+
                 // creates data transfer object for the tweet being iterated
-                TweetDTO tweetOb = new TweetDTO() { 
+                TweetDTO tweetOb = new TweetDTO()
+                {
                     TweetId = tw.TweetId,
                     Content = tw.Content,
                     RetweetId = tw.RetweetId,
                     ReplyId = tw.ReplyId,
+                    LikeCounter = tw.LikeCounter,
+                    RetweetCounter = counters[0],
+                    ReplyCounter = counters[1],
                     UserId = tw.UserId,
-                    User = userOb 
+                    User = userOb
                 };
 
 
                 // checks if tweet contains a reference to another tweet (retweetId or replyId), and adds the referenced tweet as ReferenceTweet. If both fields are populated for some reason,
                 // retweet takes precedence and replyid is ignored.
+
+                // consider nulling all retweets for this function - show retweets only in user or select tweet view?
 
                 if (tw.RetweetId != null || tw.ReplyId != null) 
                 {
@@ -54,32 +64,8 @@ namespace TwitterCloneAPI.Data
                     // checks whether this is a retweet or reply, and converts the referenced Id from nullable to regular int
                     int referenceId = (tw.RetweetId != null) ? tw.RetweetId ?? default : tw.ReplyId ?? default;
 
-                    Tweet rTw = new Tweet();
-                    using (var db = new TwitterContext()) // fetches the referenced tweet
-                    {
-                        rTw = await db.Tweets
-                            .Include(u => u.User) // fetch related User info
-                            .FirstOrDefaultAsync(x => x.TweetId == referenceId);
-                    }
-
-                    if (rTw == null) { return null; } // if referenced tweet id doesn't exist, return null
-
-                    UserDTO refUserOb = new UserDTO()
-                    {
-                        UserId = rTw.User.UserId,
-                        UserName = rTw.User.UserName,
-                        Tweets = null // User tweet list nulled to avoid recursion
-                    };
-
-                    TweetDTO refTweetOb = new TweetDTO() // creates data transfer object for the referenced tweet
-                    {
-                        TweetId = rTw.TweetId,
-                        Content = rTw.Content,
-                        UserId = rTw.UserId,
-                        User = refUserOb
-                    };
-
-                    tweetOb.ReferenceTweet = refTweetOb; // adds referenced tweet's DTO to parent tweet DTO
+                    // fetches referenced tweet and jams it into the main tweet object
+                    tweetOb.ReferenceTweet = await GetReferencedTweet(referenceId);
 
                 };
 
@@ -117,6 +103,72 @@ namespace TwitterCloneAPI.Data
             };
 
             return tweetOb;
+        }
+
+        public async Task<List<int>> GetCounters(int id)
+        {
+            List<Tweet> tweets;
+            using (var db = new TwitterContext())
+            {
+                tweets = await db.Tweets
+                    .Include(u => u.User) // fetch related User info
+                    .ToListAsync();
+            }
+
+            // int LikeCounter = tweets.Find(t => t.TweetId == id).TweetId;
+
+            int RetweetCounter = 0;
+            int ReplyCounter = 0;
+
+            foreach (Tweet twCount in tweets)
+            {
+                if (twCount.RetweetId == id) { RetweetCounter++; }
+                else if (twCount.ReplyId == id) { ReplyCounter++; }
+            }
+
+            List<int> counters = new List<int>() {
+                RetweetCounter,
+                ReplyCounter
+            };
+
+            return counters;
+        }
+
+        public async Task<TweetDTO> GetReferencedTweet(int referenceId)
+        {
+
+                Tweet rTw = new Tweet();
+                using (var db = new TwitterContext()) // fetches the referenced tweet
+                {
+                    rTw = await db.Tweets
+                        .Include(u => u.User) // fetch related User info
+                        .FirstOrDefaultAsync(x => x.TweetId == referenceId);
+                }
+
+                if (rTw == null) { return null; } // if referenced tweet id doesn't exist, return null
+
+                UserDTO refUserOb = new UserDTO()
+                {
+                    UserId = rTw.User.UserId,
+                    UserName = rTw.User.UserName,
+                    Tweets = null // User tweet list nulled to avoid recursion
+                };
+
+                List<int> refCounters = new List<int>();
+                refCounters = await GetCounters(rTw.TweetId);
+
+                TweetDTO refTweetOb = new TweetDTO() // creates data transfer object for the referenced tweet
+                {
+                    TweetId = rTw.TweetId,
+                    Content = rTw.Content,
+                    RetweetCounter = refCounters[0],
+                    ReplyCounter = refCounters[1],
+                    LikeCounter = rTw.LikeCounter,
+                    UserId = rTw.UserId,
+                    User = refUserOb
+                };
+
+                return refTweetOb;
         }
     }
 }
