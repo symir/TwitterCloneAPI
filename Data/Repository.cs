@@ -34,9 +34,8 @@ namespace TwitterCloneAPI.Data
                     Tweets = null // Includes User object without Tweet list to avoid recursion
                 };
 
-                // fetches counters (index 0 is retweets, 1 is replies)
-                List<int> counters = new List<int>();
-                counters = await GetCounters(tw.TweetId);
+                // fetches counters, keys "retweets" and "replies"
+                Dictionary<string,int> counters = await GetCounters(tw.TweetId);
 
                 // creates data transfer object for the tweet being iterated
                 TweetDTO tweetOb = new TweetDTO()
@@ -46,8 +45,8 @@ namespace TwitterCloneAPI.Data
                     RetweetId = tw.RetweetId,
                     ReplyId = tw.ReplyId,
                     LikeCounter = tw.LikeCounter,
-                    RetweetCounter = counters[0],
-                    ReplyCounter = counters[1],
+                    RetweetCounter = counters["retweets"],
+                    ReplyCounter = counters["replies"],
                     UserId = tw.UserId,
                     User = userOb
                 };
@@ -88,6 +87,9 @@ namespace TwitterCloneAPI.Data
 
             if (tweet == null){return null;} // if tweet id doesn't exist, return null to controller
 
+            // fetches counters, keys "retweets" and "replies"
+            Dictionary<string, int> counters = await GetCounters(tweet.TweetId);
+
             UserDTO userOb = new UserDTO()
             {
                 UserId = tweet.User.UserId,
@@ -99,37 +101,40 @@ namespace TwitterCloneAPI.Data
                 TweetId = tweet.TweetId,
                 Content = tweet.Content,
                 UserId = tweet.UserId,
+                RetweetCounter = counters["retweets"],
+                ReplyCounter = counters["replies"],
                 User = userOb
             };
 
             return tweetOb;
         }
 
-        public async Task<List<int>> GetCounters(int id)
+        public async Task<Dictionary<string,int>> GetCounters(int id)
         {
-            List<Tweet> tweets;
+            int retweets;
+            int replies;
+
             using (var db = new TwitterContext())
             {
-                tweets = await db.Tweets
-                    .Include(u => u.User) // fetch related User info
-                    .ToListAsync();
+                retweets = await db.Tweets
+                    .Where(i => i.RetweetId == id)
+                    .CountAsync();
+
+                replies = await db.Tweets
+                    .Where(i => i.ReplyId == id)
+                    .CountAsync();
             }
 
-            // int LikeCounter = tweets.Find(t => t.TweetId == id).TweetId;
-
-            int RetweetCounter = 0;
-            int ReplyCounter = 0;
-
-            foreach (Tweet twCount in tweets)
+            Dictionary<string, int> counters = new Dictionary<string, int>()
             {
-                if (twCount.RetweetId == id) { RetweetCounter++; }
-                else if (twCount.ReplyId == id) { ReplyCounter++; }
-            }
-
-            List<int> counters = new List<int>() {
-                RetweetCounter,
-                ReplyCounter
+                { "retweets", retweets },
+                { "replies", replies }
             };
+            /*
+            List<int> counters = new List<int>() {
+                retweets,
+                replies
+            };*/
 
             return counters;
         }
@@ -154,15 +159,14 @@ namespace TwitterCloneAPI.Data
                     Tweets = null // User tweet list nulled to avoid recursion
                 };
 
-                List<int> refCounters = new List<int>();
-                refCounters = await GetCounters(rTw.TweetId);
+                Dictionary<string,int> refCounters = await GetCounters(rTw.TweetId);
 
                 TweetDTO refTweetOb = new TweetDTO() // creates data transfer object for the referenced tweet
                 {
                     TweetId = rTw.TweetId,
                     Content = rTw.Content,
-                    RetweetCounter = refCounters[0],
-                    ReplyCounter = refCounters[1],
+                    RetweetCounter = refCounters["retweets"],
+                    ReplyCounter = refCounters["replies"],
                     LikeCounter = rTw.LikeCounter,
                     UserId = rTw.UserId,
                     User = refUserOb
