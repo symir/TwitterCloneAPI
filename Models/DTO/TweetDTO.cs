@@ -10,8 +10,8 @@ namespace TwitterCloneAPI.Models.DTO
 
         public int TweetId { get; set; }
         public string Content { get; set; }
-        public int? ReplyId { get; set; }
         public int? RetweetId { get; set; }
+        public int? ReplyId { get; set; }
         public int ReplyCounter { get; set; }
         public int RetweetCounter { get; set; }
         public int LikeCounter { get; set; }

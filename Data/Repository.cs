@@ -101,9 +101,23 @@ namespace TwitterCloneAPI.Data
                 TweetId = tweet.TweetId,
                 Content = tweet.Content,
                 UserId = tweet.UserId,
+                RetweetId = tweet.RetweetId,
+                ReplyId = tweet.ReplyId,
+                LikeCounter = tweet.LikeCounter,
                 RetweetCounter = counters["retweets"],
                 ReplyCounter = counters["replies"],
                 User = userOb
+            };
+
+            if (tweet.RetweetId != null || tweet.ReplyId != null)
+            {
+
+                // checks whether this is a retweet or reply, and converts the referenced Id from nullable to regular int
+                int referenceId = (tweet.RetweetId != null) ? tweet.RetweetId ?? default : tweet.ReplyId ?? default;
+
+                // fetches referenced tweet and jams it into the main tweet object
+                tweetOb.ReferenceTweet = await GetReferencedTweet(referenceId);
+
             };
 
             return tweetOb;
