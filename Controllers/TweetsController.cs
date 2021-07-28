@@ -85,6 +85,21 @@ namespace TwitterCloneAPI.Controllers
             }
         }
 
+        [HttpPut]
+        [Route("like/{id}")]
+        public async Task<ActionResult> LikeTweetAsync(int id)
+        {
+            try
+            {
+                await _repository.LikeTweet(id);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
         [HttpGet]
         [Route("{id}")]
         public async Task<ActionResult<TweetDTO>> GetTweetByIdAsync(int id)

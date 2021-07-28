@@ -133,7 +133,20 @@ namespace TwitterCloneAPI.Data
             }
         }
 
+        public async Task LikeTweet(int id)
+        {
+            using (var db = new TwitterContext())
+            {
+                var tweet = await db.Tweets
+                    .FirstOrDefaultAsync(x => x.TweetId == id);
+
+                tweet.LikeCounter = tweet.LikeCounter + 1; // increment like count
+                await db.SaveChangesAsync();
+            }
+        }
+
         // utility functions
+
 
         public async Task<Dictionary<string,int>> GetCounters(int id)
         {
