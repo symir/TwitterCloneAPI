@@ -6,6 +6,7 @@ using TwitterCloneAPI.Models;
 using TwitterCloneAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using TwitterCloneAPI.Models.DTO;
+using Microsoft.AspNetCore.Mvc;
 
 namespace TwitterCloneAPI.Data
 {
@@ -123,6 +124,17 @@ namespace TwitterCloneAPI.Data
             return tweetOb;
         }
 
+        public async Task CreateTweetAsync(Tweet tweet)
+        {
+            using (var db = new TwitterContext())
+            {
+                await db.Tweets.AddAsync(tweet);
+                await db.SaveChangesAsync();
+            }
+        }
+
+        // utility functions
+
         public async Task<Dictionary<string,int>> GetCounters(int id)
         {
             int retweets;
@@ -144,11 +156,6 @@ namespace TwitterCloneAPI.Data
                 { "retweets", retweets },
                 { "replies", replies }
             };
-            /*
-            List<int> counters = new List<int>() {
-                retweets,
-                replies
-            };*/
 
             return counters;
         }
