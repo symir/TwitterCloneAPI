@@ -34,9 +34,21 @@ namespace TwitterCloneAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> PostTweetAsync(Tweet tweet)
+        [Route("post")]
+        public async Task<ActionResult> PostTweetAsync([FromBody]Tweet tweet)
         {
-            Tweet newTweet = new Tweet() {
+
+            if (tweet == null)
+            {
+                return StatusCode(400); // Catches null exceptions from mangled post requests
+            } 
+            else if (tweet.Content == "RFC 2324")
+            {
+                return StatusCode(418); // This line is the lynchpin of the entire system. 
+            }
+
+            Tweet newTweet = new Tweet()
+            {
                 UserId = tweet.UserId
             };
 
@@ -64,7 +76,7 @@ namespace TwitterCloneAPI.Controllers
 
                 } else
                 {
-                    return StatusCode(400);
+                    return StatusCode(412);
                 }
             } 
             catch (Exception)

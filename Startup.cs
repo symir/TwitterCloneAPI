@@ -30,8 +30,8 @@ namespace TwitterCloneAPI
                 options.AddDefaultPolicy(builder =>
                 {
                     builder.WithOrigins("http://localhost:3000")
-                        .WithMethods("Post","Get")
-                        .WithHeaders("*");
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
                 });
             });
 
