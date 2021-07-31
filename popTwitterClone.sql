@@ -15,4 +15,4 @@ VALUES
 ('Quis autem vel eum iure reprehenderit qui in ea voluptate',1,1,NULL,1),
 ('magni dolores eos qui ratione voluptatem sequi nesciunt',1,NULL,2,2),
 ('eaque ipsa quae ab illo inventore veritatis',1,NULL,NULL,1),
-('My relationship with Soo-Yin is totally appropriate and normal',4,NULL,NULL,-1)
+('My relationship with Soon-Yi is totally appropriate and normal',4,NULL,NULL,-1)
