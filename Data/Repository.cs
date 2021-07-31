@@ -32,6 +32,8 @@ namespace TwitterCloneAPI.Data
                 {
                     UserId = tw.User.UserId,
                     UserName = tw.User.UserName,
+                    Alias = tw.User.Alias,
+                    Avatar = tw.User.Avatar,
                     Tweets = null // Includes User object without Tweet list to avoid recursion
                 };
 
@@ -95,6 +97,8 @@ namespace TwitterCloneAPI.Data
             {
                 UserId = tweet.User.UserId,
                 UserName = tweet.User.UserName,
+                Alias = tweet.User.Alias,
+                Avatar = tweet.User.Avatar,
                 Tweets = null // Includes User object without Tweet list to avoid recursion
             };
 
@@ -145,10 +149,58 @@ namespace TwitterCloneAPI.Data
             }
         }
 
-        // utility functions
+        public async Task<List<UserDTO>> GetAllRepoUsersAsync()
+        {
+            List<User> users;
+
+            using (var db = new TwitterContext())
+            {
+                users = await db.Users
+                    .ToListAsync();
+            }
+            List<UserDTO> usersReturn = new List<UserDTO>();
+
+            foreach (User user in users)
+            {
+                UserDTO userOb = new UserDTO()
+                {
+                    UserId = user.UserId,
+                    UserName = user.UserName,
+                    Alias = user.Alias,
+                    Avatar = user.Avatar
+                };
+                usersReturn.Add(userOb);
+            }
+
+            return usersReturn;
+        }
+
+        public async Task<UserDTO> GetRepoUserByIdAsync(int id)
+        {
+            User user = new User();
+
+            using (var db = new TwitterContext())
+            {
+                user = await db.Users
+                    .FirstOrDefaultAsync(x => x.UserId == id);
+            }
+
+            UserDTO userOb = new UserDTO()
+            {
+                UserId = user.UserId,
+                UserName = user.UserName,
+                Alias = user.Alias,
+                Avatar = user.Avatar
+            };
+
+            return userOb;
+
+        }
+
+            // utility functions
 
 
-        public async Task<Dictionary<string,int>> GetCounters(int id)
+            public async Task<Dictionary<string,int>> GetCounters(int id)
         {
             int retweets;
             int replies;
@@ -190,6 +242,8 @@ namespace TwitterCloneAPI.Data
                 {
                     UserId = rTw.User.UserId,
                     UserName = rTw.User.UserName,
+                    Alias = rTw.User.Alias,
+                    Avatar = rTw.User.Avatar,
                     Tweets = null // User tweet list nulled to avoid recursion
                 };
 

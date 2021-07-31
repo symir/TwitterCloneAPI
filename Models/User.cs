@@ -13,6 +13,10 @@ namespace TwitterCloneAPI.Models
         [Required]
         [MaxLength(255)]
         public string UserName { get; set; }
+        [Required]
+        [MaxLength(255)]
+        public string Alias { get; set; }
+        public int Avatar { get; set; }
 
         public List<Tweet> Tweets { get; set; }
     }
