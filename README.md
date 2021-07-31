@@ -4,7 +4,7 @@ This project exists in two repositories, *TwitterCloneAPI* and *TwitterCloneClie
 
 Backend and API is written in C# using ASP and Entity Framework, while frontend is Javascript using React.
 
-I opted for a simple two-table design for this project, one for *Users* and one for *Tweets*. *Users* consists of an account name, alias, and an integer for the avatar. Username and alias are mandatory.
+I opted for a simple two-table design for this project, one for *Users* and one for *Tweets*. *Users* consists of a *username*, *alias*, and *avatar*. *Username* and *alias* are mandatory.
 
 Each entry in *Tweets* will have some fields NULL by design - whether *ReplyId* or *RetweetId* are populated or not determines whether the tweet is considered a **reply** or a **retweet**. By using a single table for all three types indexing can be done simply without having to futz around with timestamps when displayed on the tweet timeline. *UserId* value is mandatory.
 
