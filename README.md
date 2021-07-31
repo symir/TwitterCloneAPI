@@ -4,10 +4,6 @@ This project exists in two repositories, *TwitterCloneAPI* and *TwitterCloneClie
 
 Backend and API is written in C# using ASP and Entity Framework, while frontend is Javascript using React.
 
-An SQL file with inserts to populate a new database with sample data (*popTwitterClone.sql*) can be found in the root folder of this project (*TwitterCloneAPI*).
-
-A diagram of the database design (*twitterCloneDB.png*) can be found in the root folder of this project (*TwitterCloneAPI*).
-
 I opted for a simple two-table design for this project, one for *Users* and one for *Tweets*. *Users* consists of an account name, alias, and an integer for the avatar. Username and alias are mandatory.
 
 Each entry in *Tweets* will have some fields NULL by design - whether *ReplyId* or *RetweetId* are populated or not determines whether the tweet is considered a **reply** or a **retweet**. By using a single table for all three types indexing can be done simply without having to futz around with timestamps when displayed on the tweet timeline. *UserId* value is mandatory.
@@ -20,5 +16,7 @@ The frontend is built in React, uses React-Bootstrap for styling purposes, Axios
 Tweet cards display *content*, *username* and *alias*, along with the chosen *avatar* (1-3 for female, male, and neutral). Counters for number of **likes**, **replies**, and **retweets**, are implemented as buttons that increment the like counter, add a reply (with modal reply post window), or add a retweet (with modal confirmation window), respectively. 
 
 Additional info:
+* A diagram of the database design (*twitterCloneDB.png*) can be found in the root folder of this project (*TwitterCloneAPI*).
+* An SQL file with inserts to populate a new database with sample data (*popTwitterClone.sql*) can be found in the root folder of this project (*TwitterCloneAPI*).
 * CORS in the API is configured for *//localhost:3000*
 * At minimum the system requires a single user to exist in the database, since *UserId* is mandatory for tweets. *UserId* 1 is hardcoded as the **active user** in the frontend.
