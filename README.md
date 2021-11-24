@@ -1,11 +1,11 @@
 # Twitter Clone final project
 
-This project consists of two repositories, [*TwitterCloneAPI*](http://git.ntv.is/sYmir/TwitterCloneAPI) and [*TwitterCloneClient*](http://git.ntv.is/sYmir/TwitterCloneClient). 
+This project consists of two repositories, [*TwitterCloneAPI*](https://github.com/symir/TwitterCloneAPI/) and [*TwitterCloneClient*](http://git.ntv.is/sYmir/TwitterCloneClient). 
 
 Backend and API is written in C# using ASP and Entity Framework, while frontend is Javascript using React.
 
-* A diagram of the database design [(*twitterCloneDB.png*)](http://git.ntv.is/sYmir/TwitterCloneAPI/blob/master/twitterCloneDB.png) can be found in the root folder of this project (*TwitterCloneAPI*).
-* An SQL file with inserts to populate a new database with sample data [(*popTwitterClone.sql*)](http://git.ntv.is/sYmir/TwitterCloneAPI/blob/master/popTwitterClone.sql) can be found in the root folder of this project (*TwitterCloneAPI*).
+* A diagram of the database design [(*twitterCloneDB.png*)](https://github.com/symir/TwitterCloneAPI/blob/master/twitterCloneDB.png) can be found in the root folder of this project (*TwitterCloneAPI*).
+* An SQL file with inserts to populate a new database with sample data [(*popTwitterClone.sql*)](https://github.com/symir/TwitterCloneAPI/blob/master/popTwitterClone.sql) can be found in the root folder of this project (*TwitterCloneAPI*).
 
 I opted for a simple two-table design for this project, one for *Users* and one for *Tweets*. *Users* consists of a *username*, *alias*, and *avatar*. *Username* and *alias* are mandatory.
 
