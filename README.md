@@ -1,6 +1,6 @@
 # Twitter Clone final project
 
-This project consists of two repositories, [*TwitterCloneAPI*](https://github.com/symir/TwitterCloneAPI/) and [*TwitterCloneClient*](http://git.ntv.is/sYmir/TwitterCloneClient). 
+This project consists of two repositories, [*TwitterCloneAPI*](https://github.com/symir/TwitterCloneAPI/) and [*TwitterCloneClient*](https://github.com/symir/TwitterCloneClient/). 
 
 Backend and API is written in C# using ASP and Entity Framework, while frontend is Javascript using React.
 
